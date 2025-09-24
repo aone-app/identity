@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @Entity
-public class User {
+public final class User {
     /**
      * User id
      **/
@@ -27,7 +27,6 @@ public class User {
     private String nickname;
     @Column(name = "access_failed_count")
     private int accessFailedCount;
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "lockout_end")
     private Date lockoutEnd;
 }

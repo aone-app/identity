@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserAuthority {
+public final class UserAuthority {
     @Id
     private String id;
     @Column(name = "user_id")
