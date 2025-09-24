@@ -3,9 +3,9 @@ spring:
   application:
     name: Identity
   datasource:
-    url: jdbc:mysql://localhost:3306/identity_db?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/monopoly?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
-    password: password
+    password: nerosoft.8888
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

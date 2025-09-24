@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
+@Entity(name = "user_authority")
 public final class UserAuthority {
     @Id
     private String id;
