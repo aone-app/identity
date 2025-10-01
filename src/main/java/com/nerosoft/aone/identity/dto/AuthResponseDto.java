@@ -9,7 +9,7 @@ public class AuthResponseDto {
     private String tokenType;
     private Long expiresIn;
     private Long issuedAt;
-    private String userId;
+    private String subject;
     private String username;
 }
 

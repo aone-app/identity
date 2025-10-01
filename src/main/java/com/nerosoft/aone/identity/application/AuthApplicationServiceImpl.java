@@ -78,7 +78,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
                 setExpiresIn((long) (3600 * 24));
                 setRefreshToken("");
                 setUsername(finalUser.getUsername());
-                setUserId(finalUser.getId());
+                setSubject(finalUser.getId());
                 setTokenType("Bearer");
             }
         });
