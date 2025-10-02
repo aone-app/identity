@@ -3,7 +3,7 @@ spring:
   application:
     name: Identity
   datasource:
-    url: jdbc:mysql://localhost:3306/monopoly?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/aone?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: nerosoft.8888
     driver-class-name: com.mysql.cj.jdbc.Driver
