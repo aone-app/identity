@@ -13,6 +13,7 @@ import java.util.Date;
 public final class Token {
     /** token id **/
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     /** token type: access_token, refresh_token, etc.**/
     private String type;
