@@ -28,8 +28,8 @@ public class IdentityController {
     public AuthResponseDto grantToken(@RequestBody AuthRequestDto request) {
         try {
             var future = _service.grant(request);
-            return future.get();
-        } catch (CredentialException | ExecutionException | InterruptedException e) {
+            return future.join();
+        } catch (CredentialException e) {
             return null;
         }
     }
