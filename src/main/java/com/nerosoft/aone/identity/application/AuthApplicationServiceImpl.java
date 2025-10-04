@@ -78,7 +78,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
                 setExpiresIn((long) (3600 * 24));
                 setRefreshToken("");
                 setUsername(finalUser.getUsername());
-                setSubject(finalUser.getId());
+                setSubject(String.valueOf(finalUser.getId()));
                 setTokenType("Bearer");
             }
         });
@@ -97,7 +97,7 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         var timestamp = System.currentTimeMillis();
 
         var builder = Jwts.builder();
-        builder.subject(user.getId())
+        builder.subject(String.valueOf(user.getId()))
                 .id(UUID.randomUUID().toString())
                 .issuer(environment.getProperty("JwtAuthenticationOptions.Issuer"))
                 .issuedAt(new Date(timestamp))
