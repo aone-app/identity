@@ -6,6 +6,7 @@ import com.nerosoft.aone.identity.dto.AuthResponseDto;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.CredentialException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -26,12 +27,13 @@ public class IdentityController {
      */
     @PostMapping("/token/grant")
     public AuthResponseDto grantToken(@RequestBody AuthRequestDto request) {
+        CompletableFuture<AuthResponseDto> future = null;
         try {
-            var future = _service.grant(request);
-            return future.join();
+            future = _service.grant(request);
         } catch (CredentialException e) {
-            return null;
+            throw new RuntimeException(e);
         }
+        return future.join();
     }
 
     /**
