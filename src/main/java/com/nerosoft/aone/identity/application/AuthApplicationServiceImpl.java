@@ -41,11 +41,13 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         User user = null;
         switch (request.getProvider()) {
             case "username":
-                user = repository.findByUsername(request.getUsername());
-                if (user == null) {
+                var optional = repository.findByUsername(request.getUsername());
+
+                if (optional.isEmpty()) {
                     throw new CredentialException("User name or password is incorrect");
                 }
 
+                user = optional.get();
                 // 使用DES加密算法对密码进行加密
 
                 String password = null;
