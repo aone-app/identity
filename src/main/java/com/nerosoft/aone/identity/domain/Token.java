@@ -27,4 +27,14 @@ public final class Token {
     private Date issues;
     /** the time expires at **/
     private Date expires;
+
+    public static Token create(String type, String key, long subject, Date issues, Date expires) {
+        var entity = new Token();
+        entity.setType(type);
+        entity.setKey(key);
+        entity.setSubject(subject);
+        entity.setIssues(issues);
+        entity.setExpires(expires);
+        return entity;
+    }
 }
