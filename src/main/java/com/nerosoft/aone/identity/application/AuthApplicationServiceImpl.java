@@ -9,6 +9,7 @@ import com.nerosoft.aone.identity.utils.Cryptography;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -25,22 +26,24 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
     private final UserRepository repository;
     private final Environment environment;
     private final ApplicationEventPublisher publisher;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public AuthApplicationServiceImpl(UserRepository repository, Environment environment, ApplicationEventPublisher publisher) {
+    public AuthApplicationServiceImpl(UserRepository repository, Environment environment, ApplicationEventPublisher publisher, ApplicationContext applicationContext) {
 
         this.repository = repository;
         this.environment = environment;
         this.publisher = publisher;
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public CompletableFuture<AuthResponseDto> grant(AuthRequestDto request) throws CredentialException {
         Assert.notNull(request, "request cannot be null");
 
-        User user = null;
+        User user;
         switch (request.getProvider()) {
-            case "username":
+            case "username": {
                 var optional = repository.findByUsername(request.getUsername());
 
                 if (optional.isEmpty()) {
@@ -60,7 +63,46 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
                 if (!password.equals(request.getPassword())) {
                     throw new CredentialException("User name or password is incorrect");
                 }
-                break;
+            }
+            break;
+            case "email": {
+                // 检查校验码是否正确
+
+                var optional = repository.findByEmail(request.getUsername());
+                if (optional.isEmpty()) {
+                    throw new CredentialException("Email is incorrect");
+                }
+
+                user = optional.get();
+
+            }
+            break;
+            case "phone": {
+                // 检查校验码是否正确
+
+                var optional = repository.findByPhone(request.getUsername());
+                if (optional.isEmpty()) {
+                    throw new CredentialException("Phone is incorrect");
+                }
+
+                user = optional.get();
+
+            }
+            case "github":
+            case "google":
+            case "microsoft": {
+                var provider = applicationContext.getBean(request.getProvider() + "AuthProvider", AuthProvider.class);
+                var profile = provider.authenticate(request.getUsername());
+                if (profile == null) {
+                    throw new CredentialException("Third-party authentication failed");
+                }
+                var optional = repository.findByOpenId(request.getProvider(), profile.getId());
+                if (optional.isEmpty()) {
+                    throw new CredentialException("No user is associated with the third-party account");
+                }
+                user = optional.get();
+            }
+            break;
             case "refresh_token":
                 throw new CredentialException("Refresh token is not supported yet");
 
@@ -72,18 +114,16 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
 
         var token = generateToken(user);
 
-        User finalUser = user;
-        return CompletableFuture.completedFuture(new AuthResponseDto() {
-            {
-                setAccessToken(token);
-                setTokenType("Bearer");
-                setExpiresIn((long) (3600 * 24));
-                setRefreshToken("");
-                setUsername(finalUser.getUsername());
-                setSubject(String.valueOf(finalUser.getId()));
-                setTokenType("Bearer");
-            }
-        });
+        var response = new AuthResponseDto();
+        response.setAccessToken(token);
+        response.setTokenType("Bearer");
+        response.setExpiresIn((long) (3600 * 24));
+        response.setRefreshToken("");
+        response.setUsername(user.getUsername());
+        response.setSubject(String.valueOf(user.getId()));
+        response.setTokenType("Bearer");
+
+        return CompletableFuture.completedFuture(response);
     }
 
     @Override
