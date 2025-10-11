@@ -10,10 +10,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/*
+ * Listener for handling user lockout based on authentication events.
+ */
 @Component
-public class AuthenticationEventListener {
+public class LockoutEventListener {
+
     private final ApplicationContext applicationContext;
-    public AuthenticationEventListener(ApplicationContext applicationContext) {
+
+    public LockoutEventListener(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

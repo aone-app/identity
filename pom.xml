@@ -83,6 +83,10 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>net.sizovs</groupId>
+            <artifactId>pipelinr</artifactId>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

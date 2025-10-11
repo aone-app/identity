@@ -112,12 +112,15 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
 
         publisher.publishEvent(new UserAuthSucceedEvent(this));
 
-        var token = generateToken(user);
+        var timestamp = System.currentTimeMillis();
+        var expiration = timestamp + 3600 * 24;
+
+        var token = generateToken(user,timestamp, expiration);
 
         var response = new AuthResponseDto();
         response.setAccessToken(token);
         response.setTokenType("Bearer");
-        response.setExpiresIn((long) (3600 * 24));
+        response.setExpiresIn(3600 * 24);
         response.setRefreshToken("");
         response.setUsername(user.getUsername());
         response.setSubject(String.valueOf(user.getId()));
@@ -131,19 +134,17 @@ public class AuthApplicationServiceImpl implements AuthApplicationService {
         return CompletableFuture.completedFuture(null);
     }
 
-    private String generateToken(User user) {
+    private String generateToken(User user,long issuedAt, long expiresAt) {
         Assert.notNull(user, "user cannot be null");
         var signingKey = environment.getProperty("JwtAuthenticationOptions.SigningKey");
         Assert.notNull(signingKey, "SigningKey cannot be null");
-
-        var timestamp = System.currentTimeMillis();
 
         var builder = Jwts.builder();
         builder.subject(String.valueOf(user.getId()))
                 .id(UUID.randomUUID().toString())
                 .issuer(environment.getProperty("JwtAuthenticationOptions.Issuer"))
-                .issuedAt(new Date(timestamp))
-                .expiration(new Date(timestamp + 3600 * 24)) // 24小时后过期
+                .issuedAt(new Date(issuedAt))
+                .expiration(new Date(expiresAt)) // 24小时后过期
                 .claim("name", user.getUsername());
         builder.signWith(Keys.hmacShaKeyFor(signingKey.getBytes()));
         return builder.compact();
