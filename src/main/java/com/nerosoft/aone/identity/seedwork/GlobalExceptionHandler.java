@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.security.auth.login.CredentialException;
 import java.io.IOException;
 
+/**
+ * Global exception handler to manage exceptions across the whole application.
+ */
 @RestControllerAdvice
 class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
