@@ -27,14 +27,6 @@ class GlobalExceptionHandler {
         }
     }
 
-//    @ExceptionHandler(CredentialException.class)
-//    public ResponseEntity<?> handleCredentialException(CredentialException ex) {
-//        // Log the exception (you can use a logging framework like Logback or Log4j)
-//        LOGGER.error("Credential error: ", ex);
-//
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//    }
-
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(CredentialException.class)
     public void handleCredentialException(CredentialException ex, HttpServletResponse response) {
@@ -55,15 +47,14 @@ class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    //@ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public void handleException(Exception ex, HttpServletResponse response) {
         LOGGER.error("An error occurred: ", ex);
 
         int statusCode = switch (ex) {
-            case IllegalStateException illegalStateException -> HttpStatus.BAD_REQUEST.value();
-            case IllegalArgumentException illegalArgumentException -> HttpStatus.BAD_REQUEST.value();
-            case SecurityException securityException -> HttpStatus.FORBIDDEN.value();
-            case CredentialException credentialException -> HttpStatus.UNAUTHORIZED.value();
+            case IllegalArgumentException _ -> HttpStatus.BAD_REQUEST.value();
+            case SecurityException _ -> HttpStatus.FORBIDDEN.value();
+            case CredentialException _ -> HttpStatus.UNAUTHORIZED.value();
             case null, default -> HttpStatus.INTERNAL_SERVER_ERROR.value();
         };
 
