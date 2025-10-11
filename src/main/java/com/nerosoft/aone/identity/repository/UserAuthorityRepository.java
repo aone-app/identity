@@ -2,6 +2,8 @@ package com.nerosoft.aone.identity.repository;
 
 import com.nerosoft.aone.identity.domain.UserAuthority;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserAuthorityRepository extends JpaRepository<UserAuthority, String> {
+@Repository
+public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
 }

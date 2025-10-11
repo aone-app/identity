@@ -3,15 +3,14 @@ package com.nerosoft.aone.identity.controller;
 import com.nerosoft.aone.identity.application.AuthApplicationService;
 import com.nerosoft.aone.identity.dto.AuthRequestDto;
 import com.nerosoft.aone.identity.dto.AuthResponseDto;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.CredentialException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@RestController("/api/identity")
+@RestController
+@RequestMapping("/api/identity")
 public class IdentityController {
 
     private final AuthApplicationService _service;
@@ -28,12 +27,13 @@ public class IdentityController {
      */
     @PostMapping("/token/grant")
     public AuthResponseDto grantToken(@RequestBody AuthRequestDto request) {
+        CompletableFuture<AuthResponseDto> future = null;
         try {
-            var future = _service.grant(request);
-            return future.get();
-        } catch (CredentialException | ExecutionException | InterruptedException e) {
-            return null;
+            future = _service.grant(request);
+        } catch (CredentialException e) {
+            throw new RuntimeException(e);
         }
+        return future.join();
     }
 
     /**
